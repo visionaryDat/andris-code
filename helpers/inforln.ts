@@ -3,9 +3,9 @@ import { type Page, expect } from '@playwright/test';
 // ---------------------------------------------------------------------------
 // Credentials & URLs – loaded from .env via playwright.config.ts
 // ---------------------------------------------------------------------------
-export const USERNAME = process.env.LN_USERNAME!;
-export const PASSWORD = process.env.LN_PASSWORD!;
-export const BASE_URL  = process.env.LN_BASE_URL!;
+export const USERNAME = process.env.LN_USERNAME ?? process.env.E2E_USERNAME;
+export const PASSWORD = process.env.LN_PASSWORD ?? process.env.E2E_PASSWORD;
+export const BASE_URL = process.env.LN_BASE_URL ?? process.env.BASE_URL;
 
 // ---------------------------------------------------------------------------
 // InforLN iframe helper
@@ -19,6 +19,10 @@ export function ln(page: Page) {
 // Login + dismiss startup dialog
 // ---------------------------------------------------------------------------
 export async function login(page: Page) {
+  if (!BASE_URL) {
+    throw new Error('Missing base URL. Set LN_BASE_URL or BASE_URL in .env');
+  }
+
   await page.goto(BASE_URL);
 
   // Dismiss the startup system-message dialog if it appears
